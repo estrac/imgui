@@ -371,13 +371,15 @@ static bool ImGui_ImplSDL2_Init(SDL_Window* window, SDL_Renderer* renderer)
     // Check and store if we are on a SDL backend that supports global mouse position
     // ("wayland" and "rpi" don't support it, but we chose to use a white-list instead of a black-list)
     bool mouse_can_use_global_state = false;
-#if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE
+    // SRE does not support storing the global mouse position with its event recording capabilty
+    // So, since this is optional, disable it (SRE could be enhanced to store this if necessary).
+/*#if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE
     const char* sdl_backend = SDL_GetCurrentVideoDriver();
     const char* global_mouse_whitelist[] = { "windows", "cocoa", "x11", "DIVE", "VMAN" };
     for (int n = 0; n < IM_ARRAYSIZE(global_mouse_whitelist); n++)
         if (strncmp(sdl_backend, global_mouse_whitelist[n], strlen(global_mouse_whitelist[n])) == 0)
             mouse_can_use_global_state = true;
-#endif
+#endif*/
 
     // Setup backend capabilities flags
     ImGui_ImplSDL2_Data* bd = IM_NEW(ImGui_ImplSDL2_Data)();
@@ -607,7 +609,7 @@ void ImGui_ImplSDL2_NewFrame()
     // Setup display size (every frame to accommodate for window resizing)
     int w, h;
     int display_w, display_h;
-    SDL_GetWindowSize(bd->Window, &w, &h);
+    SDL_GetWindowSizeInPixels(bd->Window, &w, &h); // TODO: (SRE #19) change back to `GetWindowSize()`
     if (SDL_GetWindowFlags(bd->Window) & SDL_WINDOW_MINIMIZED)
         w = h = 0;
     if (bd->Renderer != nullptr)
