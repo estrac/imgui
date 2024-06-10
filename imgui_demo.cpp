@@ -137,12 +137,6 @@ Index of this file:
 #endif
 
 // Helpers
-#if defined(_MSC_VER) && !defined(snprintf)
-#define snprintf    _snprintf
-#endif
-#if defined(_MSC_VER) && !defined(vsnprintf)
-#define vsnprintf   _vsnprintf
-#endif
 
 // Format specifiers, printing 64-bit hasn't been decently standardized...
 // In a real application you should be using PRId64 and PRIu64 from <inttypes.h> (non-windows) and on Windows define them yourself.
@@ -6594,7 +6588,7 @@ struct ExampleAppConsole
         char buf[1024];
         va_list args;
         va_start(args, fmt);
-        vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
+        std::vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
         buf[IM_ARRAYSIZE(buf)-1] = 0;
         va_end(args);
         Items.push_back(Strdup(buf));
